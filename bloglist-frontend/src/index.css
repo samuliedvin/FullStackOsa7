@@ -1,0 +1,37 @@
+h1 {
+    color: green;
+    font-style: italic;
+}
+  
+.blog {
+    color: #fff;
+    background: #999;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-size: 15px;
+    border: solid grey 1px;
+    border-radius: 1rem;
+}
+
+.blog:hover {
+    cursor: pointer;
+}
+
+.blogInfo {
+    margin: 1em;
+    padding: 1em;
+    background: #bbb;
+}
+
+.error {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    color: #222222;
+    background: rgb(247, 214, 214);
+    font-size: 20px;
+    border-style: solid 0.5px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
