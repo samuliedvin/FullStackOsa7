@@ -1,12 +1,20 @@
 import React from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
-
+import User from './components/User'
+import { notify } from './reducers/notificationReducer'
+import { blogInitialization } from './reducers/blogReducer'
+import { connect } from 'react-redux'
+import { setUser, logout } from './reducers/loggedUserReducer'
+import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom'
+import { ListGroup, ListGroupItem, Grid, Row, Col, Alert, FormGroup, FormControl, ControlLabel, Button, Navbar, NavItem, Nav, Well, Label, Panel } from 'react-bootstrap'
+import BlogList from './components/BlogList'
+import Users from './components/Users'
+import { userInitialization } from './reducers/usersReducer';
 
 class App extends React.Component {
     constructor(props) {
@@ -15,22 +23,19 @@ class App extends React.Component {
             blogs: [],
             username: '',
             password: '',
-            error: null,
-            user: null,
             newTitle: '',
             newUrl: '',
             newAuthor: '',
         }
     }
 
-    componentDidMount() {
-        blogService.getAll().then(blogs =>
-            this.setState({ blogs })
-        )
+    async componentDidMount() {
+        await this.props.blogInitialization()
+        await this.props.userInitialization()
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON)
-            this.setState({user})
+            this.props.setUser(user)
             blogService.setToken(user.token)
         }
     } 
@@ -43,27 +48,6 @@ class App extends React.Component {
 
     handleFieldChange = (event) => {
         this.setState({ [event.target.name]: event.target.value })
-    }
-
-    login = async (event) => {
-        event.preventDefault()
-        try{
-        const user = await loginService.login({
-            username: this.state.username,
-            password: this.state.password
-        })
-        window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-        this.setState({ username: '', password: '', user})
-        blogService.setToken(user.token)
-
-        } catch(exception) {
-            this.setState({
-                error: 'wrong username or password',
-            })
-            setTimeout(() => {
-                this.setState({ error: null })
-            }, 2000)
-        }
     }
 
     logout = (event) => {
@@ -96,42 +80,42 @@ class App extends React.Component {
             })  
     }
 
-    addLike = (id) => () => {
-        const blog = this.state.blogs.find(b => b.id === id)
-        const changedBlog = { ...blog, likes: blog.likes+1 }
-    
-        blogService
-            .update(id, changedBlog)
-            .then(changedBlog => {
-                this.setState({
-                    blogs: this.state.blogs.map(blog => blog.id !== id ? blog : changedBlog)
-            })
-            })
-            .catch(error => {
-                this.setState({
-                    error: `blog '${blog.title}' has been removed from the server`,
-                    blogs: this.state.blogs.filter(b => b.id !== id)
-            })
-            setTimeout(() => {
-                this.setState({ error: null })
-            }, 50000)
-        })
-    }
+    // addLike = (id) => () => {
+    //     const blog = this.state.blogs.find(b => b.id === id)
+    //     const changedBlog = { ...blog, likes: blog.likes+1 }
 
-    removeBlog = (id) => () => {
-        if(window.confirm("are you sure you want to remove the blog?")) {
-            blogService
-                .remove(id)
-                .then(() => {
-                    blogService
-                        .getAll()
-                        .then(blogs => {
-                            this.setState({ blogs })
-                        })
-                } 
-            )
-        }
-    }
+    //     blogService
+    //         .update(id, changedBlog)
+    //         .then(changedBlog => {
+    //             this.setState({
+    //                 blogs: this.state.blogs.map(blog => blog.id !== id ? blog : changedBlog)
+    //         })
+    //         })
+    //         .catch(error => {
+    //             this.setState({
+    //                 error: `blog '${blog.title}' has been removed from the server`,
+    //                 blogs: this.state.blogs.filter(b => b.id !== id)
+    //         })
+    //         setTimeout(() => {
+    //             this.setState({ error: null })
+    //         }, 50000)
+    //     })
+    // }
+
+    // removeBlog = (id) => () => {
+    //     if(window.confirm("are you sure you want to remove the blog?")) {
+    //         blogService
+    //             .remove(id)
+    //             .then(() => {
+    //                 blogService
+    //                     .getAll()
+    //                     .then(blogs => {
+    //                         this.setState({ blogs })
+    //                     })
+    //             } 
+    //         )
+    //     }
+    // }
 
     showDeleteForBlog = (blog) => {
         if (!blog.user.username) { 
@@ -144,10 +128,10 @@ class App extends React.Component {
     } 
 
     render() {
-        if (this.state.user === null) {
+        if (this.props.user === null) {
             return (
                 <div className="login">
-                    <Notification message={this.state.error} />
+                    <Notification />
                     <Togglable buttonLabel="login">
                         <LoginForm
                             username={this.state.username}
@@ -161,31 +145,42 @@ class App extends React.Component {
         }
   
         return (
-        <div>
-            <Notification message={this.state.error} />
-            <p>{this.state.user.name} logged in <button onClick={this.logout}>logout</button></p>
-            <Togglable buttonLabel="add blog">
-                <BlogForm 
-                    addBlog={this.addBlog}
-                    handleChange={this.handleFieldChange}
-                    newTitle={this.state.newTitle}
-                    newAuthor={this.state.newAuthor}
-                    newUrl={this.state.newUrl}
-                />
-            </Togglable>
-            <h2>blogs</h2> 
-            {this.state.blogs.sort(this.compareLikes).map(blog => // sort blogs in descending order by likes
-                <Blog 
-                    key={blog.id} 
-                    blog={blog} 
-                    addLike={this.addLike(blog.id)}
-                    removeBlog={this.removeBlog(blog.id)}
-                    showDelete={this.showDeleteForBlog(blog)}
-                />
-            )}
+        <div className="container">
+            <h1>Software anecdotes</h1>
+            <Router>
+                <div>
+                    {(this.props.message &&
+                    <Alert color="success">
+                        {this.props.message}
+                    </Alert>
+                    )}
+                    <Route exact path="/" render={() => <BlogList />} />
+                    <Route exact path="/users" render={() => <Users />} />
+                    <Route exact path="/users/:id" render={({match}) => <User userId={match.params.id}/>} />
+                </div>
+            </Router>
         </div>
         )
     }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        message: state.message,
+        user: state.loggedUser,
+        blogs: state.blogs
+    }
+  }
+
+const connectedApp = connect(
+    mapStateToProps,
+    {
+        notify,
+        blogInitialization,
+        setUser,
+        logout,
+        userInitialization
+    }
+)(App)
+
+export default connectedApp

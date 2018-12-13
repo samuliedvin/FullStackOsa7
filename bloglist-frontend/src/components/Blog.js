@@ -1,26 +1,15 @@
 import React from 'react'
 import Togglable from './Togglable'
-import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 class Blog extends React.Component {
-    constructor(props) {
-        super(props)
-    }
-
-    static propTypes = {
-        blog: PropTypes.object.isRequired,
-        addLike: PropTypes.func.isRequired,
-        removeBlog: PropTypes.func.isRequired,
-        showDelete: PropTypes.bool.isRequired
-    }
-
     handleClick = () => {
         this.blogInfo.toggleVisibility()
     }
 
     render() {
         const showWhenVisible = { display: this.props.showDelete ? '' : 'none' }
-
+        console.log(this.props)
         const togglable = () => (
                 <Togglable ref={component => this.blogInfo = component}>
                     <div className="blogInfo">
@@ -47,4 +36,16 @@ class Blog extends React.Component {
     }
 }
 
-export default Blog
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        blog: state.blogs.filter(blog => blog.id === ownProps['id'])[0]
+    }
+}
+  
+export default connect(
+    mapStateToProps,
+    {
+        
+    }
+)(Blog)
