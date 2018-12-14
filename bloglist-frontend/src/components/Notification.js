@@ -1,15 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Alert } from 'react-bootstrap'
 
 class Notification extends React.Component {
   render() {
-    if (this.props.message === null) {
-      return null
-    }
-    return (
-      <div className="error">
-        {this.props.message}
-      </div>
+    return(
+    (this.props.message &&
+      <Alert color="success">
+          {this.props.message}
+      </Alert>
+    )
     )
   }
 }

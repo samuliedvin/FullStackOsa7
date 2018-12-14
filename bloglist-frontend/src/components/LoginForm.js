@@ -4,6 +4,7 @@ import blogService from '../services/blogs'
 import { notify } from '../reducers/notificationReducer'
 import { connect } from 'react-redux'
 import { setUser } from '../reducers/loggedUserReducer'
+import { FormControl, FormGroup, Button, ControlLabel } from 'react-bootstrap'
 
 
 class LoginForm extends React.Component {
@@ -29,15 +30,13 @@ class LoginForm extends React.Component {
             <div>
                 <h2>Kirjaudu</h2>
                 <form onSubmit={this.login}>
-                    <div>
-                        käyttäjätunnus
-                        <input name="username"/>
-                    </div>
-                    <div>
-                        salasana
-                        <input type="password" name="password"/>
-                    </div>
-                    <button type="submit">kirjaudu</button>
+                    <FormGroup>
+                        <ControlLabel>Käyttäjätunnus</ControlLabel>
+                        <FormControl type="text" name="username" />
+                        <ControlLabel>Salasana</ControlLabel>
+                        <FormControl type="password" name="password" />
+                        <Button type="submit">kirjaudu</Button>
+                    </FormGroup>
                 </form>
             </div>
         )

@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Table } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 
 class User extends React.Component {
 
@@ -26,7 +27,7 @@ class User extends React.Component {
                     {this.props.user.blogs.map(blog =>
                     <tr>
                         <td>
-                            {blog.title}
+                            <Link to={`/blogs/${blog._id}`}>{blog.title}</Link>
                         </td>
                         <td>
                             {blog.author}

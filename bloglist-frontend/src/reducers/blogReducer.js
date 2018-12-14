@@ -4,18 +4,23 @@ const initialState = []
 
 const blogReducer = (store = initialState, action) => {
     switch(action.type) {
-    case 'VOTE':
+    case 'LIKE':
         const old = store.filter(a => a.id !==action.id)
-        const voted = store.find(a => a.id === action.id)
-        return [...old, { ...voted, votes: voted.votes+1 } ]
+        const liked = store.find(a => a.id === action.id)
+        return [...old, { ...liked, likes: liked.likes+1 } ]
     case 'CREATE':
         return [...store, action.data]
     case 'REMOVE':
         return store.filter(a => a.id !== action.id)    
     case 'INIT_BLOGS':
         return action.data
+    case 'ADD_COMMENT':
+        const oldC = store.filter(a => a.id !==action.id)
+        const commented = store.find(a => a.id === action.id)
+        return [...oldC, { ...commented, comments: commented.comments.concat(action.comment) } ]
+    default:
+        return store
     }
-    return store
 }
 
 export const blogInitialization = () => {
@@ -28,9 +33,9 @@ export const blogInitialization = () => {
     }
 }
 
-export const addBlog = (content) => {
+export const addBlog = (blog) => {
     return async (dispatch) => {
-        const newBlog = await blogService.create(content)
+        const newBlog = await blogService.create(blog)
         dispatch({
             type: 'CREATE',
             data: newBlog
@@ -38,14 +43,14 @@ export const addBlog = (content) => {
     }
 }
 
-export const voteBlog = (blog) => {
+export const likeBlog = (blog) => {
     return async (dispatch) => {
         await blogService.update(blog.id, {
             ...blog,
             likes: blog.likes + 1
         })
         dispatch({
-            type: 'VOTE',
+            type: 'LIKE',
             id: blog.id
         })
     }
@@ -57,6 +62,17 @@ export const removeBlog = (blog) => {
         dispatch({
             type: 'REMOVE',
             id: blog.id
+        })
+    }
+}
+
+export const commentBlog = (blog, comment) => {
+    return async (dispatch) => {
+        await blogService.comment(blog.id, comment)
+        dispatch({
+            type: 'ADD_COMMENT',
+            id: blog.id,
+            comment: comment
         })
     }
 }

@@ -1,9 +1,10 @@
 import { connect } from 'react-redux'
 import React from 'react'
-import Notification from './Notification'
-import Togglable from './Togglable'
-import Blog from './Blog'
 import BlogForm from './BlogForm'
+import { logout } from '../reducers/loggedUserReducer'
+import { Link } from 'react-router-dom'
+import { Table, PageHeader } from 'react-bootstrap'
+
 
 
 class BlogList extends React.Component {
@@ -11,28 +12,33 @@ class BlogList extends React.Component {
     render() {
         return(
             <div>
-                <Notification />
-                <p>{this.props.user.name} logged in <button onClick={this.props.logout}>logout</button></p>
-                <Togglable buttonLabel="add blog">
-                    <BlogForm 
-                        // addBlog={this.addBlog}
-                        // handleChange={this.handleFieldChange}
-                        // newTitle={this.state.newTitle}
-                        // newAuthor={this.state.newAuthor}
-                        // newUrl={this.state.newUrl}
-                    />
-                </Togglable>
-                <h2>blogs</h2> 
-                {this.props.blogs.sort(this.compareLikes).map(blog => // sort blogs in descending order by likes
-                    <Blog 
-                        id={blog.id} 
-                        key={blog.id} 
-                        // blog={blog} 
-                        // addLike={this.addLike(blog.id)}
-                        // removeBlog={this.removeBlog(blog.id)}
-                        // showDelete={this.showDeleteForBlog(blog)}
-                    />
+                <PageHeader>Blogs</PageHeader> 
+                <BlogForm /> 
+                <Table striped>
+                <thead>
+                    <tr>
+                        <th>
+                            Blog title
+                        </th>
+                        <th>
+                            Author
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {this.props.blogs.sort((a, b) => (b.likes - a.likes)).map(blog => // sort blogs in descending order by likes
+                    <tr key={blog.id}>
+                        <td>
+                            <Link to={`blogs/${blog.id}`}>{blog.title}</Link> 
+                        </td>
+                        <td>
+                            {blog.author}
+                        </td>   
+                    </tr>  
                 )}
+                </tbody>
+            </Table>
+                
             </div>
         )
     }
@@ -45,4 +51,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(BlogList)
+export default connect(mapStateToProps, { logout })(BlogList)

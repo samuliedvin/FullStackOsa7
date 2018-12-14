@@ -10,7 +10,8 @@ const formatBlog = (blog) => {
         author: blog.author,
         url: blog.url,
         likes: blog.likes,
-        user: blog.user
+        user: blog.user,
+        comments: blog.comments
     }
 }
 
@@ -22,6 +23,23 @@ blogsRouter.get('/', async (request, response) => {
     response.json(blogs.map(blog => formatBlog(blog)))
 })
   
+blogsRouter.post('/:id/comments', async (request, response) => {
+    const comment = request.body.comment
+    console.log(comment)
+    const blog = Blog
+        .findById(request.params.id)
+        .then(blog => {
+            blog.comments.push(comment)
+            blog.save()
+            response.status(204).end()
+        })
+        .catch(error => {
+            console.log(error)
+            response.status(400).send({ error: 'malformatted id' })
+        })
+    
+})
+
 blogsRouter.post('/', async (request, response) => {
     try {
         const decodedToken = jwt.verify(request.token, process.env.SECRET)
@@ -75,7 +93,6 @@ blogsRouter.delete('/:id', async (request, response) => {
         }
         const userid = decodedToken.id
         const blog = await Blog.findById(request.params.id)
-        console.log(blog.user, userid)
         if(!blog.user) {
             await blog.remove()
             return response.status(204).end()  

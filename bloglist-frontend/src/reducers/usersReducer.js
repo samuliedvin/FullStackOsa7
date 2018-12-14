@@ -4,8 +4,9 @@ const usersReducer = (store = [], action) => {
     switch(action.type) {  
         case 'INIT_USERS':
             return action.data
-        }
-    return store
+        default:
+            return store
+    }
 }
  
 export const userInitialization = () => {

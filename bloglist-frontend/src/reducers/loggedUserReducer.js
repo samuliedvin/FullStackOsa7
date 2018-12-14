@@ -19,6 +19,7 @@ export const setUser = (user) => {
 }
 
 export const logout = () => {
+    window.localStorage.removeItem('loggedBlogappUser')
     return (dispatch) => {
         dispatch({
             type: 'LOG_OUT'

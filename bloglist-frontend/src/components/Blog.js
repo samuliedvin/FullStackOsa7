@@ -1,51 +1,73 @@
 import React from 'react'
-import Togglable from './Togglable'
+import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { notify } from '../reducers/notificationReducer'
 import { connect } from 'react-redux'
+import { Jumbotron, Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import Comments from '../components/Comments'
 
 class Blog extends React.Component {
-    handleClick = () => {
-        this.blogInfo.toggleVisibility()
+    likeBlog = (blog) => () => {
+        this.props.likeBlog(blog)
     }
 
+    deleteBlog = (blog) => () => {
+        this.props.removeBlog(blog)
+        this.props.history.push('/')
+        this.props.notify(`Blog ${blog.title} was removed!`)
+    }
+
+    showDeleteForBlog = (blog) => {
+        if (!blog.user._id) { 
+            return true
+        }
+        if (blog.user._id === this.props.user.id) {
+            return true
+        }
+        return false
+    } 
+
     render() {
-        const showWhenVisible = { display: this.props.showDelete ? '' : 'none' }
-        console.log(this.props)
-        const togglable = () => (
-                <Togglable ref={component => this.blogInfo = component}>
-                    <div className="blogInfo">
-                        <p>
-                            <a href={this.props.blog.url}>{this.props.blog.url}</a>
-                        </p>
-                        <p>{this.props.blog.likes} likes <button onClick={this.props.addLike}>like</button></p>
-                        <p>added by {!this.props.blog.user ? 'anonymous' : this.props.blog.user.name}</p>
-                        <button style={showWhenVisible} onClick={this.props.removeBlog}>delete blog</button>
-                    </div>
-                </Togglable>
-        )
+        const showWhenVisible = { display: this.showDeleteForBlog(this.props.blog) ? '' : 'none' }
         
         return(
             <div>
-                <div className='blog' onClick={this.handleClick}>
-                    <p>
-                        <strong>{this.props.blog.title}</strong> {this.props.blog.author}
-                    </p>                                    
-                </div>  
-                {togglable()}
+                <Jumbotron>
+                    <h1>
+                        <strong>{this.props.blog.title}</strong> <small>{this.props.blog.author}</small>
+                    </h1>                                      
+                    <div>
+                            <p><a href={this.props.blog.url}>{this.props.blog.url}</a></p>
+                            <p>{this.props.blog.likes} likes </p>
+                            <p>added by 
+                                {
+                                    !this.props.blog.user 
+                                        ? 'anonymous' 
+                                        : <Link to={`/users/${this.props.blog.user._id}`}>{this.props.blog.user.name}</Link>
+                                }
+                            </p>
+                            <Button bsStyle="primary" onClick={this.likeBlog(this.props.blog)}>like</Button>&nbsp;
+                            <Button style={showWhenVisible} bsStyle="danger" onClick={this.deleteBlog(this.props.blog)}>delete blog</Button>
+                    </div>
+                </Jumbotron>
+                <Comments blog={this.props.blog}/>
             </div>
         )
     }
 }
 
-
 const mapStateToProps = (state, ownProps) => {
     return {
-        blog: state.blogs.filter(blog => blog.id === ownProps['id'])[0]
+        user: state.loggedUser,
+        blog: state.blogs.filter(blog => blog.id === ownProps['blogId'])[0]
     }
 }
   
 export default connect(
     mapStateToProps,
     {
-        
+        likeBlog,
+        removeBlog,
+        notify
     }
 )(Blog)
