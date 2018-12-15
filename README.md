@@ -7,6 +7,8 @@ Deployasin sovelluksen internettiin. Laitoin backendin Herokuun, pyörii osoitte
 
 Fronttikoodin laitoin sen sijaan oman kotisivutilani alle osoitteeseen http://www.samulivirtanen.fi/bloglist . Ajattelin että olisi kiva että on suoraan omien sivujen alla jos haluaa jollekin esitellä. Jouduin tekemään tämän artikkelin mukaisia muutoksia koodiin: https://medium.com/@svinkle/how-to-deploy-a-react-app-to-a-subdirectory-f694d46427c1 ja tein noille muutoksille oman branchin. 
 
+Sovellukseen voi kirjautua tunnuksilla *samuli / salainen*
+
 ### 7.3 yksittäisen käyttäjän näkymä osa, 2
 
 *Merkkaa tämä tehtävä tehdyksi jos toteuttamasi yksittäisen käyttäjän näkymä toimii oikein myös siinä tilanteessa että menet urliin suoraan tai refreshaat selaimen ollessasi käyttäjän näkymässä.* 
