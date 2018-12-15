@@ -25,7 +25,7 @@ class Users extends React.Component {
                     {this.props.users.map(user =>
                     <tr>
                         <td>
-                            <Link to={`/users/${user.id}`}> {user.name}</Link>
+                            <Link to={`${process.env.PUBLIC_URL}/users/${user.id}`}> {user.name}</Link>
                         </td>
                         <td>
                             {user.username}

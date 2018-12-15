@@ -4,11 +4,22 @@ import { connect } from 'react-redux'
 import { FormControl, FormGroup, Button, ControlLabel, ListGroup, ListGroupItem } from 'react-bootstrap'
 
 class Comments extends React.Component {
+    constructor(props ){
+        super(props)
+        this.state = {
+            newComment: ''
+        }
+    }
+
+    handleChange = (event) => {
+        this.setState({ newComment: event.target.value })
+    } 
 
     addComment = (blog) => (event) => {
         event.preventDefault()
         const comment = event.target.comment.value
         this.props.commentBlog(blog, comment)
+        this.setState({newComment: ''})
     }
 
     render() {
@@ -24,9 +35,10 @@ class Comments extends React.Component {
                         <FormControl
                             type="text"
                             name="comment"
+                            value={this.state.newComment}
+                            onChange={this.handleChange}
                         />
-
-                        <Button type="submit">Kommentoi</Button>
+                        <Button type="submit">Comment</Button>
                     </FormGroup>
                 </form>
             </div>

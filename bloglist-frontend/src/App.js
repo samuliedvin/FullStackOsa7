@@ -31,15 +31,17 @@ class App extends React.Component {
         if (this.props.user === null) {
             return (
                 <div className="container">
+                <div className="wrapper">
                     <Notification />
                     <LoginForm />
+                </div>
                 </div>
             )
         }
         return (
         <div className="container">
             <Router>
-                <div>
+                <div className="wrapper">
                     <Navbar>
                         <Navbar.Header>
                             <Navbar.Brand>
@@ -48,24 +50,24 @@ class App extends React.Component {
                         </Navbar.Header>
                         <Nav>
                             <NavItem>
-                                <Link to="/">Blogs</Link> &nbsp;
+                                <Link to={`${process.env.PUBLIC_URL}/`}>Blogs</Link> &nbsp;
                             </NavItem>
                             <NavItem>
-                                <Link to="/users">Users</Link> &nbsp;
+                                <Link to={`${process.env.PUBLIC_URL}/users`}>Users</Link> &nbsp;
                             </NavItem>
                         </Nav>
                         <Navbar.Text>
-                            <Link to={`/users/${this.props.user.id}`}>{this.props.user.name}</Link> logged in
+                            <Link to={`${process.env.PUBLIC_URL}/users/${this.props.user.id}`}>{this.props.user.name}</Link> logged in
                         </Navbar.Text>
                         <Navbar.Form>
                             <Button onClick={this.props.logout}>logout</Button>
                         </Navbar.Form>
                     </Navbar>
                     <Notification />
-                    <Route exact path="/" render={() => <BlogList />} />
-                    <Route exact path="/blogs/:id" render={({match, history}) => <Blog blogId={match.params.id} history={history} />} />
-                    <Route exact path="/users" render={() => <Users />} />
-                    <Route exact path="/users/:id" render={({match}) => <User userId={match.params.id}/>} />
+                    <Route exact path={`${process.env.PUBLIC_URL}/`} render={() => <BlogList />} />
+                    <Route exact path={`${process.env.PUBLIC_URL}/blogs/:id`} render={({match, history}) => <Blog blogId={match.params.id} history={history} />} />
+                    <Route exact path={`${process.env.PUBLIC_URL}/users`} render={() => <Users />} />
+                    <Route exact path={`${process.env.PUBLIC_URL}/users/:id`} render={({match}) => <User userId={match.params.id}/>} />
                 </div>
             </Router>
         </div>

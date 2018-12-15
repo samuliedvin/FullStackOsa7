@@ -1,0 +1,13 @@
+body {
+    background: url('https://source.unsplash.com/random/1920x1080');
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover
+}
+
+.wrapper {
+    background: rgba(255,255,255,0.9);
+    padding: 2em;
+    border-radius: 0.2em;
+    margin-top: 2em;
+}

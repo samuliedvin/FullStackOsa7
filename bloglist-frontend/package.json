@@ -2,6 +2,7 @@
   "name": "lh5-bloglist",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://www.samulivirtanen.fi/bloglist/",
   "dependencies": {
     "axios": "^0.18.0",
     "react": ">=16.6.3",

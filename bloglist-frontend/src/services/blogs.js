@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/blogs'
+const baseUrl = 'https://samuli-backend.herokuapp.com/api/blogs'
 
 let token = null
 

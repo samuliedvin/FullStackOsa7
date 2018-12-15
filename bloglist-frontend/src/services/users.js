@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/users'
+const baseUrl = 'https://samuli-backend.herokuapp.com/api/users'
 
 const getAll = () => {
     const request = axios.get(baseUrl)

@@ -13,7 +13,7 @@ class Blog extends React.Component {
 
     deleteBlog = (blog) => () => {
         this.props.removeBlog(blog)
-        this.props.history.push('/')
+        this.props.history.push(`${process.env.PUBLIC_URL}/`)
         this.props.notify(`Blog ${blog.title} was removed!`)
     }
 
@@ -39,15 +39,15 @@ class Blog extends React.Component {
                     <div>
                             <p><a href={this.props.blog.url}>{this.props.blog.url}</a></p>
                             <p>{this.props.blog.likes} likes </p>
-                            <p>added by 
+                            <p>Added by  
                                 {
                                     !this.props.blog.user 
-                                        ? 'anonymous' 
-                                        : <Link to={`/users/${this.props.blog.user._id}`}>{this.props.blog.user.name}</Link>
+                                        ? ' anonymous' 
+                                        : <Link to={`${process.env.PUBLIC_URL}/users/${this.props.blog.user._id}`}> {this.props.blog.user.name}</Link>
                                 }
                             </p>
-                            <Button bsStyle="primary" onClick={this.likeBlog(this.props.blog)}>like</Button>&nbsp;
-                            <Button style={showWhenVisible} bsStyle="danger" onClick={this.deleteBlog(this.props.blog)}>delete blog</Button>
+                            <Button bsStyle="primary" onClick={this.likeBlog(this.props.blog)}>Like</Button>&nbsp;
+                            <Button style={showWhenVisible} bsStyle="danger" onClick={this.deleteBlog(this.props.blog)}>Delete blog</Button>
                     </div>
                 </Jumbotron>
                 <Comments blog={this.props.blog}/>
